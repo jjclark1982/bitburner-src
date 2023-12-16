@@ -75,6 +75,7 @@ export class Corporation {
     this.name = params.name || "The Corporation";
     this.seedFunded = params.seedFunded ?? false;
     this.shareSaleCooldown = params.shareSaleCooldown ?? 0;
+    while (this.valuationsList.length < corpConstants.valuationLength) this.valuationsList.push(this.valuation);
   }
 
   gainFunds(amt: number, source: FundsSource): void {
