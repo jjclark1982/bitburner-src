@@ -11,6 +11,7 @@ export interface CompanyPositionCtorParams {
   applyText?: string;
   hiredText?: string;
   isPartTime?: boolean;
+  isExecutive?: boolean;
 
   reqdHacking?: number;
   reqdStrength?: number;
@@ -63,6 +64,9 @@ export class CompanyPosition {
   /** Whether this position is part-time */
   isPartTime: boolean;
 
+  /** Whether this is an executive-level position */
+  isExecutive: boolean;
+
   /** Required stats to earn this position */
   requiredAgility: number;
   requiredCharisma: number;
@@ -97,6 +101,7 @@ export class CompanyPosition {
     this.baseSalary = p.baseSalary;
     this.repMultiplier = p.repMultiplier;
     this.isPartTime = p.isPartTime ?? false;
+    this.isExecutive = p.isExecutive ?? false;
     this.applyText = p.applyText ?? `Apply for ${this.name} Job`;
     this.hiredText = p.hiredText ?? `Congratulations, you are now employed as a ${this.name}`;
 
