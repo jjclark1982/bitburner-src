@@ -23,7 +23,7 @@ export function JobSummary({ company, position }: JobSummaryProps): React.ReactE
   if (
     position.name == JobName.business5 &&
     !(Player.jobs[company.name] == position.name) &&
-    Player.augmentations.some((aug) => aug.name == AugmentationName.EmpathySuppressor)
+    Player.hasAugmentation(AugmentationName.EmpathySuppressor, true)
   ) {
     workStats.money *= 10;
   }

@@ -1,7 +1,7 @@
 import { currentNodeMults } from "../BitNode/BitNodeMultipliers";
 import { Crime } from "../Crime/Crime";
 import { newWorkStats, scaleWorkStats, WorkStats, multWorkStats } from "./WorkStats";
-import { Person as IPerson } from "@nsdefs";
+import { Person as IPerson, JobName } from "@nsdefs";
 import { CONSTANTS } from "../Constants";
 import { ClassType, FactionWorkType, LocationName, AugmentationName } from "@enums";
 import {
@@ -19,7 +19,6 @@ import { serverMetadata } from "../Server/data/servers";
 import { Company } from "../Company/Company";
 import { CompanyPosition } from "../Company/CompanyPosition";
 import { isMember } from "../utils/EnumHelper";
-import { PlayerOwnedAugmentation } from "../Augmentation/PlayerOwnedAugmentation";
 
 const gameCPS = 1000 / CONSTANTS.MilliPerCycle; // 5 cycles per second
 export const FactionWorkStats: Record<FactionWorkType, WorkStats> = {
@@ -115,7 +114,11 @@ export const calculateCompanyWorkStats = (
 ): WorkStats => {
   // If player has SF-11, calculate salary multiplier from favor
   const favorMult = isNaN(favor) ? 1 : 1 + favor / 100;
-  const bn11Mult = Player.sourceFileLvl(11) > 0 ? favorMult : 1;
+  const sf11Mult = Player.sourceFileLvl(11) > 0 ? favorMult : 1;
+  // Empathy Suppressor multiplies money by 10 ** (number of CEO positions)
+  const empathyMult = Player.hasAugmentation(AugmentationName.EmpathySuppressor, true)
+    ? Math.pow(10, Object.values(Player.jobs).filter((job: string) => job == JobName.business5).length)
+    : 1;
 
   const gains = scaleWorkStats(
     multWorkStats(
@@ -123,15 +126,9 @@ export const calculateCompanyWorkStats = (
         money:
           companyPosition.baseSalary *
           company.salaryMultiplier *
-          bn11Mult *
+          sf11Mult *
           currentNodeMults.CompanyWorkMoney *
-          (Player.augmentations
-            .map((aug: PlayerOwnedAugmentation) => {
-              return aug.name;
-            })
-            .filter((aug) => aug == AugmentationName.EmpathySuppressor).length == 1
-            ? Math.pow(10, Object.values(Player.jobs).filter((job: string) => job == "Chief Executive Officer").length)
-            : 1),
+          empathyMult,
         hackExp: companyPosition.hackingExpGain,
         strExp: companyPosition.strengthExpGain,
         defExp: companyPosition.defenseExpGain,
