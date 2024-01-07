@@ -65,7 +65,8 @@ export function getCompanyPositionMetadata(): Record<JobName, CompanyPositionCto
       reqdHacking: 501,
       reqdReputation: 400e3,
       repMultiplier: 1.6,
-      hiredText: `Congratulations, you are now ${JobName.software4}`,
+      applyText: `Apply to be the ${JobName.software4}`,
+      hiredText: `Congratulations, you are now the ${JobName.software4}`,
     },
     [JobName.software5]: {
       nextPosition: JobName.software6, // Vice President of Technology
@@ -79,7 +80,8 @@ export function getCompanyPositionMetadata(): Record<JobName, CompanyPositionCto
       reqdHacking: 501,
       reqdReputation: 800e3,
       repMultiplier: 1.6,
-      hiredText: `Congratulations, you are now ${JobName.software5}`,
+      applyText: `Apply to be the ${JobName.software5}`,
+      hiredText: `Congratulations, you are now the ${JobName.software5}`,
     },
     [JobName.software6]: {
       nextPosition: JobName.software7, // Chief Technology Officer
@@ -93,6 +95,7 @@ export function getCompanyPositionMetadata(): Record<JobName, CompanyPositionCto
       reqdHacking: 601,
       reqdReputation: 1.6e6,
       repMultiplier: 1.75,
+      applyText: `Apply to be the ${JobName.software6}`,
       hiredText: `Congratulations, you are now ${JobName.software6}`,
     },
     [JobName.software7]: {
@@ -107,7 +110,8 @@ export function getCompanyPositionMetadata(): Record<JobName, CompanyPositionCto
       reqdHacking: 751,
       reqdReputation: 3.2e6,
       repMultiplier: 2,
-      hiredText: `Congratulations, you are now ${JobName.software7}`,
+      applyText: `Apply to be the the ${JobName.software7}`,
+      hiredText: `Congratulations, you are now the ${JobName.software7}`,
     },
     [JobName.IT0]: {
       nextPosition: JobName.IT1, // IT Analyst
@@ -260,7 +264,8 @@ export function getCompanyPositionMetadata(): Record<JobName, CompanyPositionCto
       reqdHacking: 76,
       reqdReputation: 800e3,
       repMultiplier: 1.6,
-      hiredText: `Congratulations, you are now ${JobName.business4}`,
+      applyText: `Apply to be the ${JobName.business4}`,
+      hiredText: `Congratulations, you are now the ${JobName.business4}`,
     },
     [JobName.business5]: {
       nextPosition: null,
@@ -274,7 +279,8 @@ export function getCompanyPositionMetadata(): Record<JobName, CompanyPositionCto
       reqdHacking: 101,
       reqdReputation: 3.2e6,
       repMultiplier: 1.75,
-      hiredText: `Congratulations, you are now ${JobName.business5}`,
+      applyText: `Apply to be the ${JobName.business5}`,
+      hiredText: `Congratulations, you are now the ${JobName.business5}`,
     },
     [JobName.security0]: {
       nextPosition: JobName.security1, // Security Officer
