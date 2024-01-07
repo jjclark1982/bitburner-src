@@ -9,6 +9,7 @@ import { calculateCompanyWorkStats } from "../../Work/Formulas";
 import { MoneyRate } from "../../ui/React/MoneyRate";
 import { ReputationRate } from "../../ui/React/ReputationRate";
 import { StatsTable } from "../../ui/React/StatsTable";
+import { AugmentationName, JobName } from "@enums";
 
 const CYCLES_PER_SEC = 1000 / CONSTANTS.MilliPerCycle;
 interface JobSummaryProps {
@@ -18,6 +19,14 @@ interface JobSummaryProps {
 
 export function JobSummary({ company, position }: JobSummaryProps): React.ReactElement {
   const workStats = calculateCompanyWorkStats(Player, company, position, company.favor);
+  // Preview the effect of Empathy Suppressor when applying for a CEO position
+  if (
+    position.name == JobName.business5 &&
+    !(Player.jobs[company.name] == position.name) &&
+    Player.augmentations.some((aug) => aug.name == AugmentationName.EmpathySuppressor)
+  ) {
+    workStats.money *= 10;
+  }
   return (
     <>
       <Typography>
