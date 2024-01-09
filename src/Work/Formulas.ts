@@ -1,9 +1,9 @@
 import { currentNodeMults } from "../BitNode/BitNodeMultipliers";
 import { Crime } from "../Crime/Crime";
 import { newWorkStats, scaleWorkStats, WorkStats, multWorkStats } from "./WorkStats";
-import { Person as IPerson, JobName } from "@nsdefs";
+import { Person as IPerson } from "@nsdefs";
 import { CONSTANTS } from "../Constants";
-import { ClassType, FactionWorkType, LocationName, AugmentationName } from "@enums";
+import { ClassType, FactionWorkType, LocationName, AugmentationName, JobName } from "@enums";
 import {
   getFactionFieldWorkRepGain,
   getFactionSecurityWorkRepGain,
