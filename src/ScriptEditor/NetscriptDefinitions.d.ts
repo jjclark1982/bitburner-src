@@ -7360,6 +7360,12 @@ export interface NS {
    */
   getMoneySources(): MoneySources;
 
+  getMoneyIncome(source: string, sinceStart: boolean): number;
+
+  getMoneyExpenses(source: string, sinceStart: boolean): number;
+
+  getMoneyTotal(source: string, sinceStart: boolean): number;
+
   /**
    * Add callback function when the script dies
    * @remarks

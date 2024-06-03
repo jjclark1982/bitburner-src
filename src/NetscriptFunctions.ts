@@ -1713,10 +1713,37 @@ export const ns: InternalAPI<NSFull> = {
     });
     return data;
   },
-  getMoneySources: () => () => ({
-    sinceInstall: Object.assign({}, Player.moneySourceA),
-    sinceStart: Object.assign({}, Player.moneySourceB),
-  }),
+  getMoneySources: () => () => {
+    deprecationWarning("ns.getMoneySources()", "Use INSERT NEW FUNCS instead.");
+    return {
+      sinceInstall: Player.moneySinceLastAug.toGetMoneySource(),
+      sinceStart: Player.moneySinceLastBitnode.toGetMoneySource(),
+    };
+  },
+  getMoneyIncome: (ctx) => (_source, _sinceStart) => {
+    const moneySource = _sinceStart ? Player.moneySinceLastBitnode : Player.moneySinceLastAug;
+    const source = helpers.string(ctx, "source", _source);
+    if (!moneySource.isValidMoneySource(source)) {
+      throw helpers.errorMessage(ctx, `No such money source: ${source}.`);
+    }
+    return moneySource.getIncome(source);
+  },
+  getMoneyExpenses: (ctx) => (_source, _sinceStart) => {
+    const moneySource = _sinceStart ? Player.moneySinceLastBitnode : Player.moneySinceLastAug;
+    const source = helpers.string(ctx, "source", _source);
+    if (!moneySource.isValidMoneySource(source)) {
+      throw helpers.errorMessage(ctx, `No such money source: ${source}.`);
+    }
+    return moneySource.getExpenses(source);
+  },
+  getMoneyTotal: (ctx) => (_source, _sinceStart) => {
+    const moneySource = _sinceStart ? Player.moneySinceLastBitnode : Player.moneySinceLastAug;
+    const source = helpers.string(ctx, "source", _source);
+    if (!moneySource.isValidMoneySource(source)) {
+      throw helpers.errorMessage(ctx, `No such money source: ${source}.`);
+    }
+    return moneySource.getTotal(source);
+  },
   atExit: (ctx) => (callback, _id) => {
     const id = _id ? helpers.string(ctx, "id", _id) : "default";
     assertFunction(ctx, "callback", callback);

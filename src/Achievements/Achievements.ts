@@ -254,7 +254,7 @@ export const achievements: Record<string, Achievement> = {
   STOCK_1q: {
     ...achievementData.STOCK_1q,
     Icon: "$1Q",
-    Condition: () => Player.moneySourceB.stock >= 1e15,
+    Condition: () => Player.moneySinceLastBitnode.getTotal("stock") >= 1e15,
   },
   DISCOUNT: {
     ...achievementData.DISCOUNT,
@@ -300,7 +300,7 @@ export const achievements: Record<string, Achievement> = {
   HACKNET_NODE_10M: {
     ...achievementData.HACKNET_NODE_10M,
     Icon: "hacknet-10m",
-    Condition: () => !hasHacknetServers() && Player.moneySourceB.hacknet >= 10e6,
+    Condition: () => !hasHacknetServers() && Player.moneySinceLastBitnode.getIncome("hacknet") >= 10e6,
   },
   REPUTATION_10M: {
     ...achievementData.REPUTATION_10M,
@@ -333,7 +333,7 @@ export const achievements: Record<string, Achievement> = {
   HOSPITALIZED: {
     ...achievementData.HOSPITALIZED,
     Icon: "OUCH",
-    Condition: () => Player.moneySourceB.hospitalization !== 0,
+    Condition: () => Player.moneySinceLastBitnode.hasAnythingFrom("hospitalization"),
   },
   GANG: {
     ...achievementData.GANG,
@@ -485,7 +485,7 @@ export const achievements: Record<string, Achievement> = {
     ...achievementData.HACKNET_SERVER_1B,
     Icon: "HASHNETMONEY",
     Visible: () => hasAccessToSF(9),
-    Condition: () => hasHacknetServers() && Player.moneySourceB.hacknet >= 1e9,
+    Condition: () => hasHacknetServers() && Player.moneySinceLastBitnode.getIncome("hacknet") >= 1e9,
     AdditionalUnlock: [achievementData.HACKNET_NODE_10M.ID],
   },
   MAX_CACHE: {
@@ -570,10 +570,7 @@ export const achievements: Record<string, Achievement> = {
     Icon: "BN9+",
     Visible: () => hasAccessToSF(9),
     Condition: () =>
-      Player.bitNodeN === 9 &&
-      bitNodeFinishedState() &&
-      Player.moneySourceB.hacknet === 0 &&
-      Player.moneySourceB.hacknet_expenses === 0,
+      Player.bitNodeN === 9 && bitNodeFinishedState() && !Player.moneySinceLastBitnode.hasAnythingFrom("hacknet"),
   },
   CHALLENGE_BN10: {
     ...achievementData.CHALLENGE_BN10,

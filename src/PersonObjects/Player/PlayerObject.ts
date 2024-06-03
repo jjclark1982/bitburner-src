@@ -50,8 +50,8 @@ export class PlayerObject extends Person implements IPlayer {
   numPeopleKilled = 0;
   location = LocationName.TravelAgency;
   money = 1000 + CONSTANTS.Donations;
-  moneySourceA = new MoneySourceTracker();
-  moneySourceB = new MoneySourceTracker();
+  moneySinceLastAug = new MoneySourceTracker();
+  moneySinceLastBitnode = new MoneySourceTracker();
   playtimeSinceLastAug = 0;
   playtimeSinceLastBitnode = 0;
   lastAugReset = -1;

@@ -118,7 +118,7 @@ export function prestigeAugmentation(this: PlayerObject): void {
   this.playtimeSinceLastAug = 0;
   this.lastAugReset = this.lastUpdate;
   this.scriptProdSinceLastAug = 0;
-  this.moneySourceA.reset();
+  this.moneySinceLastAug.reset();
 
   this.hacknetNodes.length = 0;
   this.hashManager.prestige();
@@ -158,7 +158,7 @@ export function prestigeSourceFile(this: PlayerObject): void {
   // BitNode 3: Corporatocracy
   this.corporation = null;
 
-  this.moneySourceB.reset();
+  this.moneySinceLastBitnode.reset();
   this.playtimeSinceLastBitnode = 0;
   this.lastNodeReset = this.lastUpdate;
   this.augmentations = [];
@@ -227,16 +227,16 @@ export function canAfford(this: PlayerObject, cost: number): boolean {
 }
 
 export function recordMoneySource(this: PlayerObject, amt: number, source: MoneySource): void {
-  if (!(this.moneySourceA instanceof MoneySourceTracker)) {
-    console.warn(`Player.moneySourceA was not properly initialized. Resetting`);
-    this.moneySourceA = new MoneySourceTracker();
+  if (!(this.moneySinceLastAug instanceof MoneySourceTracker)) {
+    console.warn(`Player.moneySinceInstall was not properly initialized. Resetting`);
+    this.moneySinceLastAug = new MoneySourceTracker();
   }
-  if (!(this.moneySourceB instanceof MoneySourceTracker)) {
-    console.warn(`Player.moneySourceB was not properly initialized. Resetting`);
-    this.moneySourceB = new MoneySourceTracker();
+  if (!(this.moneySinceLastBitnode instanceof MoneySourceTracker)) {
+    console.warn(`Player.moneySinceStart was not properly initialized. Resetting`);
+    this.moneySinceLastBitnode = new MoneySourceTracker();
   }
-  this.moneySourceA.record(amt, source);
-  this.moneySourceB.record(amt, source);
+  this.moneySinceLastAug.record(amt, source);
+  this.moneySinceLastBitnode.record(amt, source);
 }
 
 export function startFocusing(this: PlayerObject): void {
@@ -570,7 +570,7 @@ export function giveAchievement(this: PlayerObject, achievementId: string): void
 }
 
 export function getCasinoWinnings(this: PlayerObject): number {
-  return this.moneySourceA.casino;
+  return this.moneySinceLastAug.getTotal("casino");
 }
 
 export function canAccessCotMG(this: PlayerObject): boolean {

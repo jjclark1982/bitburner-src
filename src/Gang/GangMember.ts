@@ -323,7 +323,7 @@ export class GangMember {
     if (this.augmentations.includes(upg.name) || this.upgrades.includes(upg.name)) return false;
 
     if (Player.money < Player.gang.getUpgradeCost(upg)) return false;
-    Player.loseMoney(Player.gang.getUpgradeCost(upg), "gang_expenses");
+    Player.loseMoney(Player.gang.getUpgradeCost(upg), "gang");
     if (upg.type === "g") {
       this.augmentations.push(upg.name);
     } else {

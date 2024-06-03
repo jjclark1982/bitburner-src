@@ -45,6 +45,7 @@ import { downloadContentAsFile } from "./utils/FileUtils";
 import { showAPIBreaks } from "./utils/APIBreaks/APIBreak";
 import { breakInfos261 } from "./utils/APIBreaks/2.6.1";
 import { handleGetSaveDataError } from "./Netscript/ErrorMessages";
+import { MoneySource, MoneySourceTracker } from "./utils/MoneySourceTracker";
 
 /* SaveObject.js
  *  Defines the object used to save/load games
@@ -739,6 +740,35 @@ Error: ${e}`);
   }
   if (ver < 39) {
     showAPIBreaks("2.6.1", ...breakInfos261);
+  }
+  if (ver < 40 && "moneySourceA" in Player && "moneySourceB" in Player) {
+    const convertSource = function (oldSource: object): MoneySourceTracker {
+      const ret: MoneySourceTracker = new MoneySourceTracker();
+      for (const [key, value] of Object.entries(oldSource)) {
+        if (typeof value !== "number") continue;
+        if (key === "hacknet_expenses") {
+          ret.expenses.hacknet = -value;
+        } else if (key === "gang_expenses") {
+          ret.expenses.gang = -value;
+        } else if (Object.hasOwn(ret.income, key)) {
+          const typedKey: MoneySource = key as MoneySource;
+          if (value > 0) {
+            ret.income[typedKey] = value;
+          } else {
+            ret.expenses[typedKey] = -value;
+          }
+        }
+      }
+      return ret;
+    };
+    if (Player.moneySourceA && typeof Player.moneySourceA === "object") {
+      Player.moneySinceLastAug = convertSource(Player.moneySourceA);
+      delete Player.moneySourceA;
+    }
+    if (Player.moneySourceB && typeof Player.moneySourceB === "object") {
+      Player.moneySinceLastBitnode = convertSource(Player.moneySourceB);
+      delete Player.moneySourceB;
+    }
   }
 }
 
