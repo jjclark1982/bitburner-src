@@ -16,7 +16,9 @@ import { Paper, Typography } from "@mui/material";
 import { StatsTable } from "../../ui/React/StatsTable";
 import { Factions } from "../../Faction/Factions";
 import { FactionName } from "@enums";
+import { Reputation } from "../../ui/React/Reputation";
 import { ReputationRate } from "../../ui/React/ReputationRate";
+import Tooltip from "@mui/material/Tooltip";
 
 interface IProps {
   totalProduction: number;
@@ -26,25 +28,47 @@ export function PlayerInfo(props: IProps): React.ReactElement {
   const hasServers = hasHacknetServers();
   const faction = Factions[FactionName.Netburners];
 
-  const rows: React.ReactNode[][] = [["Money:", <Money key="money" money={Player.money} />]];
+  const rows: React.ReactNode[][] = [];
+  rows.push(["Money Spent:", <Money key="money" money={-Player.moneySourceA.hacknet_expenses} />, null]);
+  rows.push([
+    "Money Produced:",
+    <Money key="money" money={Player.moneySourceA.hacknet} />,
+    <span key="moneyRate">
+      (<MoneyRate money={props.totalProduction} />)
+    </span>,
+  ]);
   if (hasServers) {
+    rows[1][2] = (
+      <Tooltip key="moneyRate" title="Value of hashes if sold for money">
+        <>
+          (<MoneyRate money={(props.totalProduction * 1e6) / 4} />)
+        </>
+      </Tooltip>
+    );
     rows.push([
       "Hashes:",
-      <Typography key={"hashes"}>
+      <span key={"hashes"}>
         <Hashes hashes={Player.hashManager.hashes} /> / <Hashes hashes={Player.hashManager.capacity} />
-      </Typography>,
+      </span>,
+      <span key="hashRate">
+        (<HashRate key="hashRate" hashes={props.totalProduction} />)
+      </span>,
     ]);
-    rows.push(["Total Hacknet Production:", <HashRate key="prod" hashes={props.totalProduction} />]);
-  } else {
-    rows.push(["Total Hacknet Production:", <MoneyRate key="prod" money={props.totalProduction} />]);
   }
   if (faction.isMember) {
     const repRate = (hasServers ? (props.totalProduction * 1e6) / 4 : props.totalProduction) * 1e-2;
-    rows.push([`${faction.name} reputation gain:`, <ReputationRate key="rep" reputation={repRate} />]);
+    rows.push([
+      `${faction.name} reputation:`,
+      <Reputation key="rep" reputation={faction.playerReputation} />,
+      <span key="repRate">
+        (<ReputationRate key="repRate" reputation={repRate} />)
+      </span>,
+    ]);
   }
 
   return (
-    <Paper sx={{ display: "inline-block", padding: 0.5, margin: "0.5em 0" }}>
+    <Paper sx={{ display: "inline-block", padding: "0.5em 1em", margin: "0.5em 0" }}>
+      <Typography variant="h6">Hacknet Summary</Typography>
       <StatsTable rows={rows} />
     </Paper>
   );
