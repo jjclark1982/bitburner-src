@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BBCabinetRoot } from "./BBCabinet";
+import { NetronicsCabinetRoot } from "./NetronicsCabinet";
 
 import Button from "@mui/material/Button";
 import { Player } from "@player";
@@ -8,6 +9,7 @@ import { AlertEvents } from "../../ui/React/AlertManager";
 enum Page {
   None,
   Megabyteburner2000,
+  NetronicsConnect
 }
 
 export function ArcadeRoot(): React.ReactElement {
@@ -25,6 +27,8 @@ export function ArcadeRoot(): React.ReactElement {
     return (
       <>
         <Button onClick={mbBurner2000}>Megabyte burner 2000</Button>
+        <br />
+        <Button onClick={()=>setPage(Page.NetronicsConnect)}>NETronics Connect!</Button>
       </>
     );
   }
@@ -32,6 +36,8 @@ export function ArcadeRoot(): React.ReactElement {
   switch (page) {
     case Page.Megabyteburner2000:
       currentGame = <BBCabinetRoot />;
+    case Page.NetronicsConnect:
+      currentGame = <NetronicsCabinetRoot />
   }
   return (
     <>
