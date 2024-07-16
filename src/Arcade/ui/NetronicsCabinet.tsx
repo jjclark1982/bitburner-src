@@ -25,6 +25,7 @@ import { Button, TextField, Typography } from "@mui/material";
 // Trade Wars 2057: https://bitbucket.org/almostsweet/tw2057/raw/main/tw.js
 // ACID Draw: https://bitbucket.org/almostsweet/aciddraw/raw/main/aciddraw.js
 // Life Game: https://raw.githubusercontent.com/sealleci/LcBbsTs/main/dist/life_game.js
+// netMAZE: https://raw.githubusercontent.com/JavadocMD/last-call-bbs/main/netmaze.js
 
 
 const workerScript = `
@@ -43,7 +44,7 @@ const workerScript = `
     terminal.grid.push(row);
   }
 
-  function drawChar(char, color, x, y) {
+  const drawChar = (char, color, x, y) => {
     if (x >= 0 && x < terminal.width && y >= 0 && y < terminal.height) {
       terminal.grid[y][x] = {
         char: char.replace('⚉', '💀\ufe0e'),
@@ -52,11 +53,11 @@ const workerScript = `
     }
   }
 
-  function clearScreen() {
+  const clearScreen = () => {
     fillArea(' ', 0, 0, 0, terminal.width, terminal.height)
   }
 
-  function drawText(text, color, x, y) {
+  const drawText = (text, color, x, y) => {
     text = text.toString()
     color = color < 0 || color > 17 ? 0 : color | 0
     x = x | 0
@@ -66,7 +67,7 @@ const workerScript = `
     }
   }
 
-  function drawTextWrapped(text, color, x, y, width) {
+  const drawTextWrapped = (text, color, x, y, width) => {
     color = color < 0 || color > 17 ? 0 : color | 0
     x = x | 0
     y = y | 0
@@ -86,7 +87,7 @@ const workerScript = `
     }
   }
 
-  function drawBox(color, x, y, width, height) {
+  const drawBox = (color, x, y, width, height) => {
     fillArea('═', color, x + 1, y, width - 2, 1)
     fillArea('═', color, x + 1, y + height - 1, width - 2, 1)
     fillArea('║', color, x, y + 1, 1, height - 2)
@@ -97,7 +98,7 @@ const workerScript = `
     drawChar('╝', color, x + width - 1, y + height - 1)
   }
 
-  function fillArea(symbol, color, x, y, width, height) {
+  const fillArea = (symbol, color, x, y, width, height) => {
     for (let j = 0; j < height; j++) {
       for (let i = 0; i < width; i++) {
         drawChar(symbol, color, x + i, y + j)
@@ -105,10 +106,45 @@ const workerScript = `
     }
   }
 
-  onmessage = (event)=>{
+  // const drawChar = (char, color, x, y) => {
+  //   postMessage(['drawChar', char, color, x, y])
+  // }
+
+  // const clearScreen = () => {
+  //   postMessage(['clearScreen'])
+  // }
+
+  // const drawText = (text, color, x, y) => {
+  //   postMessage(['drawText', text, color, x, y])
+  // }
+
+  // const drawTextWrapped = (text, color, x, y, width) => {
+  //   postMessage(['drawTextWrapped', text, color, x, y, width])
+  // }
+
+  // const drawBox = (color, x, y, width, height) => {
+  //   postMessage(['drawBox', color, x, y, width, height])
+  // }
+
+  // const fillArea = (symbol, color, x, y, width, height) => {
+  //   postMessage(['fillArea', symbol, color, x, y, width, height])
+  // }
+
+  const saveData = (data) => {
+    localStorage.setItem(getName(), data)
+  }
+
+  const loadData = () => {
+    return localStorage.getItem(getName()) || ''
+  }
+  
+  const onmessage = (event)=>{
     const [funcName, arg] = event.data;
     if (typeof globalThis[funcName] === 'function') {
-      postMessage([funcName, globalThis[funcName](arg)]);
+      const result = globalThis[funcName](arg);
+      if (result) {
+      	postMessage([funcName, result])
+       }
     }
     if (funcName === 'onUpdate') {
       postMessage(['updateTerminal', terminal]);
@@ -122,8 +158,7 @@ interface NetronicsTerminalProps {
   axiomScript: string
 }
 
-export function NetronicsTerminal(props: NetronicsTerminalProps): React.ReactElement {
-  const {axiomScript} = props;
+export function NetronicsTerminal({axiomScript}: NetronicsTerminalProps): React.ReactElement {
   const [serverName, setServerName] = useState('Connect to an Axiom Server...');
   const [terminal, setTerminal] = useState({
     width: 56,
@@ -135,6 +170,7 @@ export function NetronicsTerminal(props: NetronicsTerminalProps): React.ReactEle
     if (!axiomScript) {
       return;
     }
+
     const workerSrc = `
       ${workerScript}
       ${axiomScript}
@@ -151,9 +187,18 @@ export function NetronicsTerminal(props: NetronicsTerminalProps): React.ReactEle
         setTerminal(response);
       }
     };
+    worker.onerror = (event)=>{
+      console.log("worker error:", event);
+    };
+    worker.onmessageerror = (event)=>{
+      console.log("worker message error:", event);
+    };
     const updateInterval = setInterval(()=>{
       worker.postMessage(['onUpdate'])
     }, 1000 / 30);
+    worker.postMessage('getName');
+    Object.assign(globalThis, {axiomWorker: worker, workerSrc: workerSrc});
+
     return ()=>{
       clearInterval(updateInterval);
       worker.terminate();
@@ -164,11 +209,11 @@ export function NetronicsTerminal(props: NetronicsTerminalProps): React.ReactEle
     <Typography><b>{serverName}</b></Typography>
     <Typography component="div">{
       terminal.grid.map((row)=>(
-        <p>
+        <div>
           {row.map((loc)=>(
           <span style={{"color": COLORS[loc.color]}}>{loc.char}</span>
           ))}
-        </p>))
+        </div>))
     }</Typography>
   </>);
 }
